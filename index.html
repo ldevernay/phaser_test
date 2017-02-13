@@ -15,7 +15,7 @@
 	<script type="text/javascript">
 
 	var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-	var player, cursors, star, baddie;
+	var player, cursors, star, baddie, bg;
 	var score = 0;
 	var scoreText;
 
@@ -33,16 +33,14 @@
 
 		// Removes the star from the screen
 		player.kill();
-		//  Add and update the score
-		score = 0;
-		scoreText.text = 'Score: ' + score;
+
+		game.state.start(game.state.current);
 	}
 
 	function animateBaddie(player, baddie){
 		baddie.body.velocity.x = -300;
 
 		baddie.animations.play('left');
-
 	}
 	function preload() {
 		game.load.image('sky', 'assets/sky.png');
@@ -57,7 +55,7 @@
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		//  A simple background for our game
-		game.add.sprite(0, 0, 'sky');
+		bg = game.add.sprite(0, 0, 'sky');
 
 		//  The platforms group contains the ground and the 2 ledges we can jump on
 		platforms = game.add.group();
@@ -134,8 +132,6 @@
 		baddie.animations.add('left', [0, 1], 10, true);
 		baddie.animations.add('right', [2, 3], 10, true);
 
-		animateBaddie(player, baddie);
-
 	}
 
 	function update() {
@@ -145,6 +141,8 @@
 
 		// Collide baddie and platforms
 		var baddieHitPlatform = game.physics.arcade.collide(baddie, platforms);
+
+		animateBaddie(player, baddie);
 
 		//  Reset the players velocity (movement)
 		player.body.velocity.x = 0;
